@@ -1,0 +1,304 @@
+:root {
+    /* Dark Mode (Default) */
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --heading-color: #ffffff;
+    --primary-color: #bb86fc;
+    --primary-hover: #9b67e0;
+    --success-color: #03dac6;
+    --error-color: #cf6679;
+    --border-radius: 8px;
+    --input-bg: #2c2c2c;
+    --input-border: #444;
+    --border-color: #333;
+    --log-bg: #000000;
+    --drop-zone-bg: #252525;
+    --drop-zone-border: #444;
+}
+
+body.light-mode {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --heading-color: #2c3e50;
+    --primary-color: #007bff;
+    --primary-hover: #0069d9;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --input-bg: #ffffff;
+    --input-border: #ddd;
+    --border-color: #eee;
+    --log-bg: #1e1e1e;
+    --drop-zone-bg: #f8f9fa;
+    --drop-zone-border: #ddd;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    transition: background-color 0.3s, color 0.3s;
+    min-height: 100vh;
+}
+
+#app {
+    width: 100%;
+    max-width: 550px;
+}
+
+h1 {
+    margin: 0;
+    color: var(--heading-color);
+    font-size: 1.8rem;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dark-mode-btn {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    font-size: 20px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    transition: all 0.2s;
+}
+
+.dark-mode-btn:hover {
+    background: var(--primary-color);
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+}
+
+h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--heading-color);
+}
+
+.cable-note {
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* Drop Zone */
+.drop-zone {
+    border: 2px dashed var(--drop-zone-border);
+    border-radius: var(--border-radius);
+    background: var(--drop-zone-bg);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: var(--primary-color);
+    background: rgba(187, 134, 252, 0.1);
+}
+
+.drop-zone-content {
+    pointer-events: none;
+}
+
+.drop-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.drop-zone p {
+    margin: 5px 0;
+    color: var(--text-color);
+}
+
+.drop-subtext {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* File Info */
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    background: var(--input-bg);
+    border-radius: var(--border-radius);
+    margin-top: 15px;
+}
+
+#file-name {
+    flex: 1;
+    font-weight: 500;
+    color: var(--success-color);
+}
+
+#file-size {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.btn-small {
+    padding: 4px 10px;
+    font-size: 12px;
+    background: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    opacity: 0.8;
+}
+
+/* Buttons */
+button {
+    background-color: var(--primary-color);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    opacity: 0.9;
+}
+
+button:disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+}
+
+body.light-mode button {
+    color: white;
+}
+
+body.light-mode button:disabled {
+    background-color: #ccc;
+    color: #888;
+}
+
+.button-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.usb-button-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.usb-button-group button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.usb-status-box {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-left: none;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-size: 12px;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.status.connected {
+    color: var(--success-color);
+}
+
+.status.disconnected {
+    color: var(--error-color);
+}
+
+/* Log Container */
+#log-container {
+    background: var(--log-bg);
+    color: #00ff00;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    padding: 12px;
+    border-radius: 4px;
+    height: 200px;
+    overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.log-entry {
+    margin: 2px 0;
+}
+
+.log-entry.error {
+    color: #ff6b6b;
+}
+
+.log-entry.success {
+    color: #69db7c;
+}
+
+.log-entry.info {
+    color: #74c0fc;
+}
+
+/* Browser Warning */
+.browser-warning {
+    background: rgba(207, 102, 121, 0.2);
+    border: 1px solid var(--error-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-top: 20px;
+    display: none;
+}
+
+.browser-warning.show {
+    display: block;
+}

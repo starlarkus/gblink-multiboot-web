@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GB-Link USB Multiboot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="header-row">
+            <h1>GB-Link USB Multiboot</h1>
+            <button id="btn-dark-mode" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>ROM File</h2>
+            </div>
+            <div id="drop-zone" class="drop-zone">
+                <div class="drop-zone-content">
+                    <span class="drop-icon">📁</span>
+                    <p>Drag & drop a .gba file here</p>
+                    <p class="drop-subtext">or click to select</p>
+                </div>
+                <input type="file" id="file-input" accept=".gba,.bin" hidden>
+            </div>
+            <div id="file-info" class="file-info" style="display: none;">
+                <span id="file-name">No file selected</span>
+                <span id="file-size"></span>
+                <button id="btn-clear-file" class="btn-small">✕ Clear</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Connection</h2>
+                <p class="cable-note">Gameboy Color link cable required</p>
+            </div>
+            <div class="button-row">
+                <div class="usb-button-group">
+                    <button id="btn-connect-usb">Connect USB</button>
+                    <div class="usb-status-box">
+                        <span id="usb-status" class="status disconnected">Disconnected</span>
+                    </div>
+                </div>
+                <button id="btn-send-multiboot" disabled>Send Multiboot</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Log</h2>
+            </div>
+            <div id="log-container"></div>
+        </div>
+
+        <div id="browser-warning" class="browser-warning">
+            ⚠️ <strong>Browser Not Supported:</strong> WebUSB requires Chrome or Edge.
+        </div>
+    </div>
+
+    <script src="usb_connection.js"></script>
+    <script src="multiboot.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
