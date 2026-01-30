@@ -20,6 +20,16 @@ class UsbConnection {
 
             this.device = await navigator.usb.requestDevice({ filters: filters });
             await this.device.open();
+
+            // Fix for stale connections on refresh
+            if (this.device.reset) {
+                try {
+                    await this.device.reset();
+                } catch (e) {
+                    console.warn("Device reset failed (non-fatal):", e);
+                }
+            }
+
             await this.device.selectConfiguration(1);
 
             // Find interface and endpoints
