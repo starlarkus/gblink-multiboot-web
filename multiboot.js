@@ -1,23 +1,7 @@
 /**
  * GBA Multiboot Implementation for WebUSB
+ * Supports both old (reconfigurable) and new (GBLink unified) firmware.
  */
-
-const CONFIG_SIGNATURE = [
-    0xCA, 0xFE, 0xCA, 0xFE, 0xCA, 0xFE, 0xCA, 0xFE,
-    0xCA, 0xFE, 0xCA, 0xFE, 0xCA, 0xFE, 0xCA, 0xFE,
-    0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD, 0xBE, 0xEF,
-    0xDE, 0xAD, 0xBE, 0xEF, 0xDE, 0xAD, 0xBE, 0xEF
-];
-
-function getConfigureList(usBetweenTransfer, bytesForTransfer) {
-    const config = new Uint8Array(36);
-    for (let i = 0; i < 32; i++) config[i] = CONFIG_SIGNATURE[i];
-    config[32] = usBetweenTransfer & 0xFF;
-    config[33] = (usBetweenTransfer >> 8) & 0xFF;
-    config[34] = (usBetweenTransfer >> 16) & 0xFF;
-    config[35] = bytesForTransfer & 0xFF;
-    return config;
-}
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -95,9 +79,9 @@ async function Spi32Batch(usb, values) {
     return results;
 }
 
-// Max words per USB batch. 8 words × 4 bytes = 32 bytes.
-// Kept under 64 bytes to fit comfortably within the firmware's TX FIFO.
-const BATCH_WORDS = 8;
+// Max words per USB batch. Keep below 64 bytes (USB endpoint maxPacketSize)
+// 14 words × 4 bytes = 56 bytes per batch (safe, avoids 64-byte ZLP).
+const BATCH_WORDS = 14;
 
 async function multiboot(usb, romData, log = console.log) {
     const fdata = new Uint8Array(romData);
@@ -114,21 +98,39 @@ async function multiboot(usb, romData, log = console.log) {
     const paddedData = new Uint8Array(fsize + 0x10);
     paddedData.set(fdata);
 
-    // Configure firmware
-    log("Configuring firmware for GBA mode...");
-    const config = getConfigureList(36, 4);
-    await usb.writeBytes(config);
-    await readAll(usb);
+    // Configure firmware for GBA multiboot
+    log("Configuring firmware for GBA multiboot...");
+
+    if (usb.isNewFirmware) {
+        // New firmware: set GB Link mode, then configure timing for 32-bit transfers
+        await usb.setMode(MODE.GB_LINK);
+        await delay(100); // Give firmware time to switch mode
+    }
+
+    // Configure timing: 36µs between transfers, 4 bytes per transfer (32-bit SPI)
+    await usb.setTimingConfig(36, 4);
+
+    // Old firmware: drain stale data (the config magic packet triggers a SPI exchange,
+    // so the firmware sends bytes back on the data endpoint that must be consumed).
+    // New firmware: skip this — timing config goes to the command endpoint and produces
+    // no data-endpoint response. A transferIn that times out leaves a stale pending read
+    // at the WebUSB level that silently consumes the first real SPI response.
+    if (!usb.isNewFirmware) {
+        await readAll(usb);
+    }
 
     // Wait for GBA
     log("Waiting for GBA... Turn on your GBA with the link cable connected.");
 
     let recv, attempts = 0;
     do {
-        recv = (await Spi32(usb, 0x6202)) >>> 16;
+        const raw = await Spi32(usb, 0x6202);
+        recv = raw >>> 16;
         await delay(10);
         attempts++;
-        if (attempts % 100 === 0) log(`Still waiting... (${attempts / 100}s)`, "info");
+        if (attempts <= 5 || attempts % 100 === 0) {
+            log(`SPI poll #${attempts}: sent 0x6202, got 0x${raw.toString(16).padStart(8, '0')} (upper=0x${recv.toString(16)})`, "info");
+        }
         if (attempts > 6000) { log("Timeout", "error"); return false; }
     } while (recv !== 0x7202);
 
@@ -259,4 +261,4 @@ async function multiboot(usb, romData, log = console.log) {
     return true;
 }
 
-window.GBAMultiboot = { multiboot, getConfigureList };
+window.GBAMultiboot = { multiboot };
