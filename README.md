@@ -38,25 +38,15 @@ The multiboot protocol sends a GBA ROM over the link cable using SPI communicati
 4. **Data Transfer** - Send encrypted ROM data with verification
 5. **Finalization** - CRC validation and boot trigger
 
-## Files
-
-| File | Description |
-|------|-------------|
-| `index.html` | Main HTML page |
-| `style.css` | Styling with dark/light mode |
-| `app.js` | UI logic and event handling |
-| `multiboot.js` | GBA multiboot protocol implementation |
-| `usb_connection.js` | WebUSB connection handling |
-
 ## Technical Notes
 
 - Uses `BigInt` for seed multiplication to avoid JavaScript precision loss
 - Firmware configured for 36µs between 4-byte SPI transfers
-- Supports vendor IDs: `0xCAFE` (TinyUSB) and `0x239A` (Adafruit)
+
 
 ## Compatible Firmware
 
-This tool is designed to work with [gb-link-firmware-reconfigurable](https://github.com/starlarkus/gb-link-firmware-reconfigurable) 
+This tool is designed to work with [GBLink firmware](https://github.com/starlarkus/GBLink-Firmware) or [reconfigurable firmware (legacy)](https://github.com/starlarkus/gb-link-firmware-reconfigurable)
 running on an RP2040-based board (Raspberry Pi Pico, etc.).
 
 ## License
